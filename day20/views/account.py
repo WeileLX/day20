@@ -1,32 +1,8 @@
 import dbutils.pooled_db
 import pymysql
-from flask import Blueprint, render_template, request,redirect
+from flask import Blueprint, render_template, request,redirect, session
 
 from utils import db
-
-"""
-conn = pymysql.connect(
-    host="localhost",
-    user="root",
-    password="Chen061215!LX",
-    database="day21_project1",
-    charset="utf8mb4"
-)"""
-POOL = dbutils.pooled_db.PooledDB(
-    creator=pymysql,
-    maxconnections=10,
-    mincached=10,
-    maxcached=10,
-    blocking=True,
-    setsession=[],
-    ping=0,
-    host="localhost",
-    user="root",
-    password="Chen061215!LX",
-    database="day21_project1",
-    charset="utf8mb4",
-)
-
 
 
 #蓝图对象
@@ -49,12 +25,8 @@ def login():
 #connect to MYSQL to check if the user is in the database
     result = db.fetch_one("select * from user_database where role=%s and mobile=%s and password=%s", (role, mobile, password))
 
-
-
-
-    user = result
-
-    if user:
+    if result:
+        session["user_id"] = {"role":role,"real_name":result['real_name'],"id":result['id']}
         return redirect("/order/list") #跳转其他网址
     else:
         return render_template("login.html",error="登陆失败，请重试")

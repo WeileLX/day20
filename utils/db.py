@@ -19,7 +19,7 @@ POOL = dbutils.pooled_db.PooledDB(
 
 def fetch_one(sql,params):
     conn = POOL.connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute(sql,params)
     user = cursor.fetchone()
     cursor.close()
